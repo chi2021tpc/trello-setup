@@ -1,4 +1,5 @@
 import csv
+import re
 import sys
 
 if len(sys.argv) < 3:
@@ -65,4 +66,82 @@ def load_data_1(path):
     return data
 
 
+def load_data_2(path):
+    # Load data from the csv file
+    # Note: specifyinig "utf-8-sig" is necessary to properly handle the BOM "\ufeff" at the beginning of the csv document
+    with open(path, newline='', encoding = "utf-8-sig") as csv_file:
+        reader = csv.DictReader(csv_file)
+        data = [row for row in reader]
+
+    data = [row for row in data if not "incomplete" in row["Status"]]
+    data = [row for row in data if not "QR" in row["Decision"]]
+    data = [row for row in data if not "DR" in row["Decision"]]
+
+    keys_to_be_deleted = [
+        "Action",
+        "Title(2849)",
+        "Contact Name",
+        "Contact Email",
+        "Status",
+        "Shared Note",
+        "Decision", "AverageMatch Score", "MinimumMatch Score", "Average MatchScore Rank(average 156.7)", "ReviewsTotal", "ReviewsDone", "ReviewsLeft", "ReviewsTentative", "DiscussionComments", "CommitteeScore", "ReviewerScore", "OverallScore", "OverallStdDev", "WeightedOverall Score", "Primary Subcommittee Selection", "Secondary Subcommittee Selection", "-", "Key Words", "Anonymity Check", "Agreement to review", "CHI 2021 Submitter Agreement", "Pname", "Pscore", "PRecommendation", "PRecommendation for PC Meeting", "PFinal Reviews Ready - Post PC Meeting", "PBest paper nomination", "PSuitability for other Venues", "PPublicity Headline", "PFinal Acceptance of Camera Ready", "S1name", "S1score", "S1Recommendation", "S1Recommendation for PC Meeting", "S1Best paper nomination", "S1Suitability for other Venues", "S1Publicity Headline", "S2name", "S2score", "S2Recommendation", "S2Recommendation for PC Meeting", "S2Best paper nomination", "S2Suitability for other Venues", "S2Publicity Headline", "S3name", "S3score", "S3Recommendation", "S3Recommendation for PC Meeting", "S3Best paper nomination", "S3Suitability for other Venues", "S3Publicity Headline", "S4name", "S4score", "S4Recommendation", "S4Recommendation for PC Meeting", "S4Best paper nomination", "S4Suitability for other Venues", "S4Publicity Headline", "E1name", "E1score", "E1Recommendation", "E2name", "E2score", "E2Recommendation", "E3name", "E3score", "E3Recommendation", "E4name", "E4score", "E4Recommendation", "E5name", "E5score", "E5Recommendation", "E6name", "E6score", "E6Recommendation", "E7name", "E7score", "E7Recommendation", "E8name", "E8score", "E8Recommendation", "Last update"
+    ]
+    for row in data:
+        for key in keys_to_be_deleted:
+            del row[key]
+
+    return data
+
+# Abbreviations and precise names (Not used in this script)
+# subcommittees = {
+#     "ASSETS": "Accessibility and Aging",
+#     "CompInt": "Computational Interaction",
+#     "Critical": "Critical and Sustainable Computing",
+#     "CSCW": "Interaction Beyond the Individual",
+#     "Design": "Design",
+#     "EIST": "Engineering Interactive Systems and Technologies",
+#     "Games": "Games and Play",
+#     "Health": "Health",
+#     "ITDM": "Interaction Techniques, Devices, and Modalities",
+#     "Learning": "Learning, Education, and Families",
+#     "People": "Understanding People: Theory, Concepts, Methods",
+#     "Pri & Sec": "Privacy and Security",
+#     "Sp Apps": "Specific Applications Areas",
+#     "Usability": "User Experience and Usability",
+#     "Viz": "Visualization",
+# }
+
 data_1 = load_data_1(input_1_path)
+data_2 = load_data_2(input_2_path)
+
+assert(len(data_1) == len(data_2))
+
+for row in data_1:
+
+    def retrieve_subcommittee(paper_id):
+        for row_2 in data_2:
+            if row_2["ID"] == paper_id:
+                return row_2["Subcommittee"]
+        assert False
+
+    # Get the paper ID in the four-digit form
+    paper_id = row["Paper ID"].replace("pn", "")
+
+    # Get the subcommittee name (and the track if applicable)
+    subcommittee = retrieve_subcommittee(paper_id)
+
+    # Simplify subcommittee names if necessary
+    #
+    # Before:
+    # Interaction Techniques, Devices and Modalities B, Interaction Techniques, Devices and Modalities joint
+    #
+    # After:
+    # Interaction Techniques, Devices and Modalities B
+    subcommittee = re.sub("([A-C])[A-Za-z,\ ]*(joint)", r"\1", subcommittee)
+
+    row["Subcommittee"] = subcommittee
+    del row["Primary Subcommittee Selection"]
+    del row["Secondary Subcommittee Selection"]
+    del row["-"]
+
+    print(row)
