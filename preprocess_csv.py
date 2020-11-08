@@ -137,11 +137,18 @@ for row in data_1:
     #
     # After:
     # Interaction Techniques, Devices and Modalities B
-    subcommittee = re.sub("([A-C])[A-Za-z,\ ]*(joint)", r"\1", subcommittee)
+    subcommittee = re.sub(r"([A-C])(, )[A-Za-z,\ :]*(joint)", r"\1", subcommittee)
 
     row["Subcommittee"] = subcommittee
     del row["Primary Subcommittee Selection"]
     del row["Secondary Subcommittee Selection"]
     del row["-"]
 
-    print(row)
+
+subcommittee_list = set()
+for row in data_1:
+    subcommittee_list.add(row["Subcommittee"])
+subcommittee_list = sorted(subcommittee_list)
+
+for subcommittee in subcommittee_list:
+    print(subcommittee)
