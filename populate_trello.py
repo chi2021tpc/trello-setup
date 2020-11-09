@@ -1,9 +1,16 @@
+import os
 import requests
+import yaml
 
 # ------------------------------------------------------------------------------
 
-key = "put_your_key_here"
-token = "put_your_token_here"
+config_path = os.path.dirname(os.path.abspath(__file__)) + "/config/config.yml"
+
+with open(config_path, 'r') as yml:
+    config = yaml.load(yml, Loader=yaml.FullLoader)
+
+key = config["key"]
+token = config["token"]
 
 # ------------------------------------------------------------------------------
 
