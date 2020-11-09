@@ -147,13 +147,23 @@ for row in data_1:
 # Remove entries that were assigned to "Desk Reject" tracks
 data_1 = [row for row in data_1 if not "Desk Reject" in row["Subcommittee"]]
 
+# Display the list of subcommittee tracks
 subcommittee_list = set()
 for row in data_1:
     subcommittee_list.add(row["Subcommittee"])
 subcommittee_list = sorted(subcommittee_list)
-
 for subcommittee in subcommittee_list:
     print(subcommittee)
 
+# Report stats
 print("The number of subcommittee tracks: {}".format(len(subcommittee_list)))
 print("The number of submissions to be discussed in the PC meeting: {}".format(len(data_1)))
+
+# Export as a new csv file
+with open(output_path, 'w', newline='') as csv_file:
+    field_names = data_1[0].keys()
+    writer = csv.DictWriter(csv_file, fieldnames=field_names)
+
+    writer.writeheader()
+    for row in data_1:
+        writer.writerow(row)
