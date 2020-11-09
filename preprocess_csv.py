@@ -20,11 +20,9 @@ def load_data_1(path):
         data = [row for row in reader]
 
     # Delete irrelevant submissions
-    print("The number of submissions: {}".format(len(data)))
     data = [row for row in data if not "incomplete" in row["Status"]]
     data = [row for row in data if not "QR" in row["Decision"]]
     data = [row for row in data if not "DR" in row["Decision"]]
-    print("The number of submissions to be discussed in the PC meeting: {}".format(len(data)))
 
     # Delete irrelevant data columns
     keys_to_be_deleted = [
@@ -125,6 +123,8 @@ for row in data_1:
         assert False
 
     # Get the paper ID in the four-digit form
+    #
+    # E.g., "pn1234" -> "1234"
     paper_id = row["Paper ID"].replace("pn", "")
 
     # Get the subcommittee name (and the track if applicable)
@@ -144,6 +144,8 @@ for row in data_1:
     del row["Secondary Subcommittee Selection"]
     del row["-"]
 
+# Remove entries that were assigned to "Desk Reject" tracks
+data_1 = [row for row in data_1 if not "Desk Reject" in row["Subcommittee"]]
 
 subcommittee_list = set()
 for row in data_1:
@@ -152,3 +154,6 @@ subcommittee_list = sorted(subcommittee_list)
 
 for subcommittee in subcommittee_list:
     print(subcommittee)
+
+print("The number of subcommittee tracks: {}".format(len(subcommittee_list)))
+print("The number of submissions to be discussed in the PC meeting: {}".format(len(data_1)))
