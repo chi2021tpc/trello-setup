@@ -16,13 +16,17 @@ token = config["token"]
 
 base_url = "https://api.trello.com/1/"
 
-board_name = "New Test Board"
-board_desc = "A dummy description tet for the new test board."
+board_name = "Dummy Subcommittee A - CHI 2021"
+board_desc = "This Trello board is for managing the status of each submission and also creating paper groups for session organization."
 
 list_names = [
-    "List A",
-    "List B",
-    "List C",
+    "Not Discussed Yet",
+    "Accepted (Not Grouped Yet)",
+    "Rejected",
+    "Tabled",
+    "Accepted (Session: XXX)",
+    "Accepted (Session: YYY)",
+    "Accepted (Session: ZZZ)",
 ]
 
 # ------------------------------------------------------------------------------
