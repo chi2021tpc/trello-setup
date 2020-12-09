@@ -59,11 +59,11 @@ print("#tracks: {}".format(len(subcommittee_track_list)))
 
 trello_data = {}
 
-for track in subcommittee_track_list:
+for track_id in range(len(subcommittee_track_list)):
+    track = subcommittee_track_list[track_id]
     board_name = track + " - CHI 2021"
 
-    if not "Modalities A" in track:
-        continue
+    print(board_name)
 
     # --------------------------------------------------------------------------
 
