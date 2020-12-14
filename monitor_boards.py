@@ -7,7 +7,7 @@ import json
 # ------------------------------------------------------------------------------
 
 if len(sys.argv) < 2:
-    print("Usage: python get_status.py /path/to/input/yaml /path/to/output/csv")
+    print("Usage: python monitor_boards.py /path/to/input/json /path/to/output/csv")
     exit(0)
 
 input_path = sys.argv[1]
